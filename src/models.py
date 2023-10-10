@@ -245,6 +245,16 @@ class Favorite_Species(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_id_relationship = relationship(User)
 
+    def __repr__(self):
+        return 'The ID of the favorite species is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "species_id": self.id,
+            "user_id": self.user_id
+        }
+
 
 
 

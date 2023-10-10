@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species
 #from models import Person
 
 app = Flask(__name__)
@@ -291,9 +291,9 @@ def handle_species(species_id):
 # admin endpoint // (get) ver todas las starships favoritas con sus usuarios correspondientes
 @app.route('/favorite_starships', methods=['GET'])
 def handle_allfavoritestarships():    
-    favorite_starships = Favorite_Starships.query.all()
-    favorite_starships_serialized = list(map(lambda x: x.serialize(), favorite_starships))
-    return jsonify(favorite_starships_serialized), 200
+    all_favorite_starships = Favorite_Starships.query.all()
+    all_favorite_starships_serialized = list(map(lambda x: x.serialize(), all_favorite_starships))
+    return jsonify(all_favorite_starships_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que una starship en concreta fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una starship en concreta
 @app.route('/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
@@ -351,9 +351,9 @@ def handle_userfavoritestarship(user_id, starship_id):
 # admin endpoint // (get) ver todos los planets favoritos con sus usuarios correspondientes
 @app.route('/favorite_planets', methods=['GET'])
 def handle_allfavoriteplanets():
-    favorite_planets = Favorite_Planets.query.all()
-    favorite_planets_serialized = list(map(lambda x: x.serialize(), favorite_planets))
-    return jsonify(favorite_planets_serialized), 200
+    all_favorite_planets = Favorite_Planets.query.all()
+    all_favorite_planets_serialized = list(map(lambda x: x.serialize(), all_favorite_planets))
+    return jsonify(all_favorite_planets_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que un planet en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un planet en concreto
 @app.route('/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
@@ -410,9 +410,9 @@ def handle_userfavoriteplanet(user_id, planet_id):
 # admin endpoint // (get) ver todos los films favoritos con sus usuarios correspondientes
 @app.route('/favorite_films', methods=['GET'])
 def handle_allfavoritefilms():
-    favorite_films = Favorite_Films.query.all()
-    favorite_films_serialized = list(map(lambda x: x.serialize(), favorite_films))
-    return jsonify(favorite_films_serialized), 200
+    all_favorite_films = Favorite_Films.query.all()
+    all_favorite_films_serialized = list(map(lambda x: x.serialize(), all_favorite_films))
+    return jsonify(all_favorite_films_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que un film en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un film en concreto
 @app.route('/favorite_films/<int:film_id>', methods=['GET', 'DELETE'])
@@ -467,9 +467,9 @@ def handle_userfavoritefilm(user_id, film_id):
 # admin endpoint // (get) ver todos los characters favoritos con sus usuarios correspondientes
 @app.route('/favorite_characters', methods=['GET'])
 def handle_allfavoritecharacters():
-    favorite_characters = Favorite_Characters.query.all()
-    favorite_characters_serialized = list(map(lambda x: x.serialize(), favorite_characters))
-    return jsonify(favorite_characters_serialized), 200
+    all_favorite_characters = Favorite_Characters.query.all()
+    all_favorite_characters_serialized = list(map(lambda x: x.serialize(), all_favorite_characters))
+    return jsonify(all_favorite_characters_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que un character en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un character en concreto
 @app.route('/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'])
@@ -518,6 +518,18 @@ def handle_userfavoritecharacter(user_id, character_id):
         db.session.delete(user_favorite_character)
         db.session.commit()
         return ({'msg': 'Favorite character with ID {} deleted from favorites of user with ID {}'.format(character_id, user_id)})
+
+# ENDPOINTS DE FAVORITE_SPECIES
+# admin endpoint // (get) ver todos las species favoritas con sus usuarios correspondientes
+@app.route('/favorite_species', methods=['GET'])
+def handle_allfavoritespecies():
+    all_favorite_species = Favorite_Species.query.all()
+    all_favorite_species_serialized = list(map(lambda x: x.serialize(), all_favorite_species))
+    return jsonify(all_favorite_species_serialized), 200
+
+# admin endpoint // (get) para ver todas las veces que una species en concreto fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una species en concreto
+# (post) agregar species a un usuario en concreto y (get) ver las species favoritos de un usuario en concreto
+# (get) para ver individualmente las species concretas de un user concreto y (delete) para eliminar una species concreta de los favoritos de un user concreto
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
