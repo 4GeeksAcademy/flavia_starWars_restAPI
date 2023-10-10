@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets
 #from models import Person
 
 app = Flask(__name__)
@@ -37,6 +37,7 @@ def sitemap():
     return generate_sitemap(app)
 
 # ENDPOINTS DE USER
+# (post) agregar nuevos usuarios y (get) obtener todos los usuarios agregados
 @app.route('/user', methods=['POST', 'GET'])
 def handle_allusers():
     if request.method == 'POST':
@@ -61,6 +62,7 @@ def handle_allusers():
         users_serialized = list(map(lambda x: x.serialize(), users))
         return jsonify(users_serialized)
 
+# (get) obtener la información de un usuario en concreto y (put) modificar datos de un usuario en concreto
 @app.route('/user/<int:user_id>', methods=['GET', 'PUT'])
 def handle_user(user_id):
     user = User.query.get(user_id)
@@ -82,6 +84,7 @@ def handle_user(user_id):
         return jsonify({'msg': 'Updated user with ID {}'.format(user_id)}), 200
 
 # ENDPOINTS DE STARSHIPS
+# (post) agregar nuevos starships y (get) obtener todos los starships agregados
 @app.route('/starships', methods=['POST', 'GET'])
 def handle_allstarships():
     if request.method == 'POST':
@@ -103,6 +106,7 @@ def handle_allstarships():
         starships_serialized = list(map(lambda x: x.serialize(), starships))
         return jsonify(starships_serialized)
 
+# (get) obtener la información de un starship en concreto y (put) modificar datos de un starship en concreto
 @app.route('/starships/<int:starships_id>', methods=['GET', 'PUT'])
 def handle_starship(starships_id):
     starship = Starships.query.get(starships_id)
@@ -122,6 +126,7 @@ def handle_starship(starships_id):
         return jsonify({'msg': 'Updated starship with ID {}'.format(starships_id)})
     
 # ENDPOINTS DE PLANETS
+# (post) agregar nuevos planets y (get) obtener todos los planets agregados
 @app.route('/planets', methods=['POST', 'GET'])
 def handle_allplanets():
     if request.method == 'POST':
@@ -146,6 +151,7 @@ def handle_allplanets():
         planets_serialized = list(map(lambda x: x.serialize(), planets))
         return jsonify(planets_serialized)
 
+# (get) obtener la información de un planeta en concreto y (put) modificar datos de un planeta en concreto
 @app.route('/planets/<int:planets_id>', methods=['GET', 'PUT'])
 def handle_planet(planets_id):
     planets = Planets.query.get(planets_id)
@@ -167,6 +173,7 @@ def handle_planet(planets_id):
         return jsonify({'msg': 'Updated planet with ID {}'.format(planets_id)})
 
 # ENDPOINTS DE FILMS
+# (post) agregar nuevos films y (get) obtener todos los films agregados
 @app.route('/films', methods=['POST', 'GET'])
 def handle_newfilm():
     if request.method == 'POST':
@@ -190,7 +197,8 @@ def handle_newfilm():
         films = Films.query.all()
         films_serialized = list(map(lambda x: x.serialize(), films))
         return jsonify(films_serialized)
-        
+
+# (get) obtener la información de un film en concreto y (put) modificar datos de un film en concreto
 @app.route('/films/<int:films_id>', methods=['GET', 'PUT'])
 def handle_film(films_id):
     film = Films.query.get(films_id)
@@ -210,6 +218,7 @@ def handle_film(films_id):
         return jsonify({'msg': 'Updated film with ID {}'.format(films_id)}), 200
 
 # ENDPOINTS DE CHARACTERS
+# (post) agregar nuevos characters y (get) obtener todos los characters agregados
 @app.route('/characters', methods=['POST', 'GET'])
 def handle_allcharacters():
     if request.method == 'POST':
@@ -226,7 +235,8 @@ def handle_allcharacters():
         characters = Characters.query.all()
         characters_serialized = list(map(lambda x: x.serialize(), characters))
         return jsonify(characters_serialized), 200
-    
+
+# (get) obtener la información de un character en concreto y (put) modificar datos de un character en concreto
 @app.route('/characters/<int:characters_id>', methods=['GET', 'PUT'])
 def handle_character(characters_id):
     character = Characters.query.get(characters_id)
@@ -242,6 +252,7 @@ def handle_character(characters_id):
             return jsonify({'msg': 'Updated character with ID {}'.format(characters_id)}), 200
 
 # ENPOINTS DE SPECIES
+# (post) agregar nuevos species y (get) obtener todos los species agregados
 @app.route('/species', methods=['POST', 'GET'])
 def handle_allspecies():
     if request.method == 'POST':
@@ -259,6 +270,7 @@ def handle_allspecies():
         species_serialized = list(map(lambda x: x.serialize(), species))
         return jsonify(species_serialized), 200
 
+# (get) obtener la información de un species en concreto y (put) modificar datos de un species en concreto
 @app.route('/species/<int:species_id>', methods=['GET', 'PUT'])
 def handle_species(species_id):
     species = Species.query.get(species_id)
@@ -276,13 +288,12 @@ def handle_species(species_id):
         return jsonify({'msg': 'Updated species with ID {}'.format(species_id)})
 
 # ENDPOINTS DE FAVORITES STARSHIPS
-# admin endpoint // (get) ver todas las starships favoritas con sus usuarios 
+# admin endpoint // (get) ver todas las starships favoritas con sus usuarios correspondientes
 @app.route('/favorite_starships', methods=['GET'])
 def handle_allfavoritestarships():    
-    if request.method == 'GET':
-        favorite_starships = Favorite_Starships.query.all()
-        favorite_starships_serialized = list(map(lambda x: x.serialize(), favorite_starships))
-        return jsonify(favorite_starships_serialized), 200
+    favorite_starships = Favorite_Starships.query.all()
+    favorite_starships_serialized = list(map(lambda x: x.serialize(), favorite_starships))
+    return jsonify(favorite_starships_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que una starship en concreta fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una starship en concreta
 @app.route('/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
@@ -310,7 +321,7 @@ def handle_userfavoritestarships(user_id):
         if 'starship_id' not in body:
             return jsonify({'msg': 'Specify starship_id'}), 400
         if not (Starships.query.get(body['starship_id']) and User.query.get(user_id)):
-            return jsonify({'msg': 'Invalid starship_id o user_id'})
+            return jsonify({'msg': 'Invalid starship_id o user_id'}), 400
         favorite_starship = Favorite_Starships()
         favorite_starship.starship_id = body['starship_id']
         favorite_starship.user_id = user_id
@@ -322,19 +333,79 @@ def handle_userfavoritestarships(user_id):
         favorite_starship = list(map(lambda x: x.serialize(), favorite_starship))
         return jsonify(favorite_starship), 200
 
-# (get) para ver individualmente el starship concreto de un user concreto y (delete) para eliminar de favoritos el starship concreto de un user concreto
+# (get) para ver individualmente el starship concreto de un user concreto y (delete) para eliminar un starship concreto de los favoritos de un user concreto
 @app.route('/user/<int:user_id>/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
 def handle_userfavoritestarship(user_id, starship_id):
     user_favorite_starship = Favorite_Starships.query.filter_by(starship_id = starship_id, user_id = user_id).first()
     if not user_favorite_starship:
-        return jsonify({'msg': 'Invalid user_id or starship_id'})
+        return jsonify({'msg': 'Invalid user_id or starship_id'}), 400
     user_favorite_starship_serialized = user_favorite_starship.serialize()
     if request.method == 'GET':
-        return jsonify(user_favorite_starship_serialized)
+        return jsonify(user_favorite_starship_serialized), 200
     if request.method == 'DELETE':
         db.session.delete(user_favorite_starship)
         db.session.commit()
-        return jsonify({'msg': 'Favorite starship with ID {} deleted from user with ID {} favorites'.format(starship_id, user_id)})
+        return jsonify({'msg': 'Favorite starship with ID {} deleted from user with ID {} favorites'.format(starship_id, user_id)}), 200
+
+#ENPOINTS DE FAVORITE_PLANETS
+# admin endpoint // (get) ver todos los planets favoritos con sus usuarios correspondientes
+@app.route('/favorite_planets', methods=['GET'])
+def handle_allfavoriteplanets():
+    favorite_planets = Favorite_Planets.query.all()
+    favorite_planets_serialized = list(map(lambda x: x.serialize(), favorite_planets))
+    return jsonify(favorite_planets_serialized), 200
+
+# admin endpoint // (get) para ver todas las veces que un planet en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un planet en concreto
+@app.route('/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
+def handle_favoriteplanets(planet_id):
+    favorite_planets = Favorite_Planets.query.filter_by(planet_id = planet_id)
+    if favorite_planets is None:
+        return jsonify({'msg': 'The planet with ID {} does not exist'.format(planet_id)}), 400
+    if request.method == 'GET':
+        favorite_planets_serialized = list(map(lambda x: x.serialize(), favorite_planets))
+        return jsonify(favorite_planets_serialized), 200
+    if request.method == 'DELETE':
+        for fav in favorite_planets:
+            db.session.delete(fav)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite Planets with ID {} succesfully delete'.format(planet_id)}), 200
+
+# (post) agregar planets a un usuario en concreto y (get) ver los planets favoritos de un usuario en concreto
+@app.route('/user/<int:user_id>/favorite_planets', methods=['GET', 'POST'])
+def handle_userfavoriteplanets(user_id):
+    if request.method == 'POST':
+        body = request.get_json(silent=True)
+        if body is None:
+            return jsonify({'msg': 'Body cannot be empy'}), 400
+        if 'planet_id' not in body:
+            return jsonify({'msg': 'Specify planet_id'}), 400
+        if not (Planets.query.get(body['planet_id']) and User.query.get(user_id)):
+            return jsonify({'msg': 'Invalid planet_id or user_id'}), 400
+        favorite_planet = Favorite_Planets()
+        favorite_planet.planet_id = body['planet_id']
+        favorite_planet.user_id = user_id
+        db.session.add(favorite_planet)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite planet succesfully added'}), 200
+    if request.method == 'GET':
+        favorite_planet = Favorite_Planets.query.filter_by(user_id = user_id)
+        favorite_planet_serialized = list(map(lambda x: x.serialize(), favorite_planet))
+        return jsonify(favorite_planet_serialized), 200
+
+# (get) para ver individualmente el planet concreto de un user concreto y (delete) para eliminar un planet concreto de los favoritos de un user concreto
+@app.route('/user/<int:user_id>/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
+def handle_userfavoriteplanet(user_id, planet_id):
+    user_favorite_planet = Favorite_Planets.query.filter_by(user_id = user_id, planet_id = planet_id).first()
+    if not user_favorite_planet:
+        return jsonify({'msg': 'Invalid user_id or planet_id'})
+    user_favorite_planet_serialized = user_favorite_planet.serialize()
+    if request.method == 'GET':
+        return jsonify(user_favorite_planet_serialized), 200
+    if request.method == 'DELETE':
+        db.session.delete(user_favorite_planet)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite planet with ID {} deleted from user with ID {} favorites'.format(planet_id, user_id)}), 200 
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
