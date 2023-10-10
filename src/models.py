@@ -118,7 +118,17 @@ class Films(db.Model):
     title = db.Column(db.String(120), unique=True, nullable=False)
     episode = db.Column(db.Integer, unique=True, nullable=False)
     director = db.Column(db.String(50))
-    release_date = db.Column(db.Date)
+
+    def __repr__(self):
+        return 'The name of the film is {}'.format(self.title)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "episode" : self.episode,
+            "director": self.director
+        }
 
 class Films_Characters(db.Model):
     __tablename__ = 'films_characters'
@@ -151,6 +161,15 @@ class Characters(db.Model):
     planet = db.Column(db.Integer, db.ForeignKey('planets.id'))
     character = db.relationship('Species')
 
+    def __repr__(self):
+        return 'The name of the character is {}'.format(self.name)
+    
+    def serialize(self):
+        return {
+            "id": self.id, 
+            "name": self.name
+        }
+
 class Favorite_Characters(db.Model):
     __tablename__ = 'favorite_characters'
     id = db.Column(db.Integer, primary_key=True)
@@ -166,6 +185,16 @@ class Species(db.Model):
     classification = db.Column(db.String(50))
     planet = db.Column(db.Integer, db.ForeignKey('planets.id'))
     character = db.Column(db.Integer, db.ForeignKey('characters.id'))
+
+    def __repr__(self):
+        return 'The name of the species is {}'.format(self.name)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "classification": self.classification
+        }
 
 class Favorite_Species(db.Model):
     __tablename__ = 'favorite_species'
