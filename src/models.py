@@ -175,6 +175,16 @@ class Favorite_Films(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_relationship = db.relationship(User)
 
+    def __repr__(self):
+        return 'The favorite planet ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "film_id": self.film_id,
+            "user_id": self.user_id
+        }
+
 class Characters(db.Model):
     __tablename__ = 'characters'
     id = db.Column(db.Integer, primary_key=True)
