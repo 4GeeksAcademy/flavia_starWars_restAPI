@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters
 #from models import Person
 
 app = Flask(__name__)
@@ -463,6 +463,61 @@ def handle_userfavoritefilm(user_id, film_id):
         db.session.commit()
         return ({'msg': 'Favorite film with ID {} deleted from favorites of user with ID {}'.format(film_id, user_id)})
 
+# ENDPOINTS DE FAVORITE_CHARACTERS
+# admin endpoint // (get) ver todos los characters favoritos con sus usuarios correspondientes
+@app.route('/favorite_characters', methods=['GET'])
+def handle_allfavoritecharacters():
+    favorite_characters = Favorite_Characters.query.all()
+    favorite_characters_serialized = list(map(lambda x: x.serialize(), favorite_characters))
+    return jsonify(favorite_characters_serialized), 200
+
+# admin endpoint // (get) para ver todas las veces que un character en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un character en concreto
+@app.route('/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'])
+def handle_favoritecharacter(character_id):
+    favorite_characters = Favorite_Characters.query.filter_by(character_id = character_id)
+    if request.method == 'GET':
+        favorite_characters_serialized = list(map(lambda x: x.serialize(), favorite_characters))
+        return jsonify(favorite_characters_serialized), 200
+    if request.method == 'DELETE':
+        for fav in favorite_characters:
+            db.session.delete(fav)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite character with ID {} successfully deleted'.format(character_id)}), 200
+    
+# (post) agregar characters a un usuario en concreto y (get) ver los characters favoritos de un usuario en concreto
+@app.route('/user/<int:user_id>/favorite_characters', methods=['POST', 'GET'])
+def handle_userfavoritecharacters(user_id):
+    if request.method == 'POST':
+        body = request.get_json(silent=True)
+        if body is None:
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'character_id' not in body:
+            return jsonify({'msg': 'Specify character_id'}), 400
+        if not (Characters.query.get(body['character_id']) and User.query.get(user_id)):
+            return ({'msg': 'Invalid character_id or user_id'}), 400
+        favorite_character = Favorite_Characters()
+        favorite_character.character_id = body['character_id']
+        favorite_character.user_id = user_id
+        db.session.add(favorite_character)
+        db.session.commit()
+        return ({'msg': 'Favorite film successfully added'}), 200
+    if request.method == 'GET':
+        user_favorite_characters = Favorite_Characters.query.filter_by(user_id = user_id)
+        user_favorite_characters_serialized = list(map(lambda x: x.serialize(), user_favorite_characters))
+        return jsonify(user_favorite_characters_serialized)
+
+# (get) para ver individualmente el character concreto de un user concreto y (delete) para eliminar un character concreto de los favoritos de un user concreto
+@app.route('/user/<int:user_id>/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'])
+def handle_userfavoritecharacter(user_id, character_id):
+    user_favorite_character = Favorite_Characters.query.filter_by(user_id = user_id, character_id = character_id).first()
+    if not user_favorite_character:
+        return ({'msg': 'Invalid user_id or character_id'}), 400
+    if request.method == 'GET':
+        return jsonify(user_favorite_character.serialize()), 200
+    if request.method == 'DELETE':
+        db.session.delete(user_favorite_character)
+        db.session.commit()
+        return ({'msg': 'Favorite character with ID {} deleted from favorites of user with ID {}'.format(character_id, user_id)})
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
