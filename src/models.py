@@ -76,6 +76,16 @@ class Favorite_Starships(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_relationship = db.relationship(User)
 
+    def __repr__(self):
+        return 'The favorite starship ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "starship_id": self.starship_id,
+            "user_id": self.user_id
+        }
+
 class Planets(db.Model):
     __tablename__ = 'planets'
     id = db.Column(db.Integer, primary_key=True)
