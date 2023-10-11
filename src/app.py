@@ -322,16 +322,18 @@ def handle_userfavoritestarships(user_id):
             return jsonify({'msg': 'Specify starship_id'}), 400
         if not (Starships.query.get(body['starship_id']) and User.query.get(user_id)):
             return jsonify({'msg': 'Invalid starship_id o user_id'}), 400
-        favorite_starship = Favorite_Starships()
-        favorite_starship.starship_id = body['starship_id']
-        favorite_starship.user_id = user_id
-        db.session.add(favorite_starship)
+        if (Favorite_Starships.query.filter_by(user_id = user_id, starship_id = body['starship_id']).first()):
+            return jsonify({'msg': 'Starship already in favorites of the user with ID {}'.format(user_id)})
+        user_favorite_starship = Favorite_Starships()
+        user_favorite_starship.starship_id = body['starship_id']
+        user_favorite_starship.user_id = user_id
+        db.session.add(user_favorite_starship)
         db.session.commit()
         return jsonify({'msg': 'Favorite starship successfully added'}), 200
     if request.method == 'GET':
-        favorite_starship = Favorite_Starships.query.filter_by(user_id = user_id)
-        favorite_starship = list(map(lambda x: x.serialize(), favorite_starship))
-        return jsonify(favorite_starship), 200
+        user_favorite_starship = Favorite_Starships.query.filter_by(user_id = user_id)
+        user_favorite_starship_serialized = list(map(lambda x: x.serialize(), user_favorite_starship))
+        return jsonify(user_favorite_starship_serialized), 200
 
 # (get) para ver individualmente el starship concreto de un user concreto y (delete) para eliminar un starship concreto de los favoritos de un user concreto
 @app.route('/user/<int:user_id>/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
@@ -381,16 +383,18 @@ def handle_userfavoriteplanets(user_id):
             return jsonify({'msg': 'Specify planet_id'}), 400
         if not (Planets.query.get(body['planet_id']) and User.query.get(user_id)):
             return jsonify({'msg': 'Invalid planet_id or user_id'}), 400
-        favorite_planet = Favorite_Planets()
-        favorite_planet.planet_id = body['planet_id']
-        favorite_planet.user_id = user_id
-        db.session.add(favorite_planet)
+        if (Favorite_Planets.query.filter_by(user_id = user_id, planet_id = body['planet_id']).first()):
+            return jsonify({'msg': 'Planet already in favorites of the user with ID {}'.format(user_id)})
+        user_favorite_planet = Favorite_Planets()
+        user_favorite_planet.planet_id = body['planet_id']
+        user_favorite_planet.user_id = user_id
+        db.session.add(user_favorite_planet)
         db.session.commit()
         return jsonify({'msg': 'Favorite planet successfully added'}), 200
     if request.method == 'GET':
-        favorite_planet = Favorite_Planets.query.filter_by(user_id = user_id)
-        favorite_planet_serialized = list(map(lambda x: x.serialize(), favorite_planet))
-        return jsonify(favorite_planet_serialized), 200
+        user_favorite_planet = Favorite_Planets.query.filter_by(user_id = user_id)
+        user_favorite_planet_serialized = list(map(lambda x: x.serialize(), user_favorite_planet))
+        return jsonify(user_favorite_planet_serialized), 200
 
 # (get) para ver individualmente el planet concreto de un user concreto y (delete) para eliminar un planet concreto de los favoritos de un user concreto
 @app.route('/user/<int:user_id>/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
@@ -419,7 +423,7 @@ def handle_allfavoritefilms():
 def handle_favoritefilm(film_id):
     favorite_film = Favorite_Films.query.filter_by(film_id = film_id)
     if favorite_film is None:
-        return jsonify({'msg': 'The film with ID {} does not exist'.format(film_id)})
+        return jsonify({'msg': 'The film with ID {} does not exist'.format(film_id)}), 400
     if request.method == 'GET':
         favorite_film_serialized = list(map(lambda x: x.serialize(), favorite_film))
         return jsonify(favorite_film_serialized), 200
@@ -440,10 +444,12 @@ def handle_userfavoritefilms(user_id):
             return jsonify({'msg': 'Specify film_id'}), 400
         if not (Films.query.get(body['film_id']) and User.query.get(user_id)):
             return jsonify({'msg': 'Invalid film_id or user_id'}), 400
-        favorite_film = Favorite_Films()
-        favorite_film.film_id = body['film_id']
-        favorite_film.user_id = user_id
-        db.session.add(favorite_film)
+        if (Favorite_Films.query.filter_by(user_id = user_id, film_id = body['film_id']).first()):
+            return jsonify({'msg': 'Film already in favorites of the user with ID {}'.format(user_id)})
+        user_favorite_film = Favorite_Films()
+        user_favorite_film.film_id = body['film_id']
+        user_favorite_film.user_id = user_id
+        db.session.add(user_favorite_film)
         db.session.commit()
         return jsonify({'msg': 'Favorite film successfully added'}), 200
     if request.method == 'GET':
@@ -495,12 +501,14 @@ def handle_userfavoritecharacters(user_id):
             return jsonify({'msg': 'Specify character_id'}), 400
         if not (Characters.query.get(body['character_id']) and User.query.get(user_id)):
             return ({'msg': 'Invalid character_id or user_id'}), 400
-        favorite_character = Favorite_Characters()
-        favorite_character.character_id = body['character_id']
-        favorite_character.user_id = user_id
-        db.session.add(favorite_character)
+        if (Favorite_Characters.query.filter_by(user_id = user_id, character_id = body['character_id']).first()):
+            return jsonify({'msg': 'Character already in favorites of the user with ID {}'.format(user_id)})
+        user_favorite_character = Favorite_Characters()
+        user_favorite_character.character_id = body['character_id']
+        user_favorite_character.user_id = user_id
+        db.session.add(user_favorite_character)
         db.session.commit()
-        return ({'msg': 'Favorite film successfully added'}), 200
+        return ({'msg': 'Favorite character successfully added'}), 200
     if request.method == 'GET':
         user_favorite_characters = Favorite_Characters.query.filter_by(user_id = user_id)
         user_favorite_characters_serialized = list(map(lambda x: x.serialize(), user_favorite_characters))
@@ -522,14 +530,60 @@ def handle_userfavoritecharacter(user_id, character_id):
 # ENDPOINTS DE FAVORITE_SPECIES
 # admin endpoint // (get) ver todos las species favoritas con sus usuarios correspondientes
 @app.route('/favorite_species', methods=['GET'])
-def handle_allfavoritespecies():
+def handle_all_favorite_species():
     all_favorite_species = Favorite_Species.query.all()
     all_favorite_species_serialized = list(map(lambda x: x.serialize(), all_favorite_species))
     return jsonify(all_favorite_species_serialized), 200
 
 # admin endpoint // (get) para ver todas las veces que una species en concreto fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una species en concreto
+@app.route('/favorite_species/<int:species_id>', methods=['GET', 'DELETE'])
+def handle_favorite_species_group(species_id):
+    favorite_species = Favorite_Species.query.filter_by(species_id = species_id)
+    if favorite_species is None:
+        return jsonify({'msg': 'Favorite species with ID {} does not exist'.format(species_id)}), 400
+    if request.method == 'GET':
+        favorite_species_serialized = list(map(lambda x: x.serialize(), favorite_species))
+        return jsonify(favorite_species_serialized), 200
+    if request.method == 'DELETE':
+        for fav in favorite_species:
+            db.session.delete(fav)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite species with ID {} successfully deleted'.format(species_id)}), 200
+
 # (post) agregar species a un usuario en concreto y (get) ver las species favoritos de un usuario en concreto
+@app.route('/user/<int:user_id>/favorite_species', methods=['POST', 'GET'])
+def handle_user_all_favorite_species(user_id):
+    if request.method == 'POST':
+        body = request.get_json(silent=True)
+        if body is None:
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'species_id' not in body:
+            return jsonify({'msg': 'Specify species_id'}), 400
+        if (Favorite_Species.query.filter_by(user_id = user_id, species_id = body['species_id']).first()):
+            return jsonify({'msg': 'Species already in favorites of the user with ID {}'.format(user_id)})
+        user_favorite_species = Favorite_Species()
+        user_favorite_species.species_id = body['species_id']
+        user_favorite_species.user_id = user_id
+        db.session.add(user_favorite_species)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite species successfully added'}), 200
+    if request.method == 'GET':
+        user_favorite_species = Favorite_Species.query.filter_by(user_id = user_id)
+        user_favorite_species_serialized = list(map(lambda x: x.serialize(), user_favorite_species))
+        return jsonify(user_favorite_species_serialized), 200
+
 # (get) para ver individualmente las species concretas de un user concreto y (delete) para eliminar una species concreta de los favoritos de un user concreto
+@app.route('/user/<int:user_id>/favorite_species/<int:species_id>', methods=['GET', 'DELETE'])
+def handle_user_one_favorite_species(user_id, species_id):
+    user_one_favorite_species = Favorite_Species.query.filter_by(user_id = user_id, species_id = species_id).first()
+    if request.method == 'GET':
+        return jsonify(user_one_favorite_species.serialize()), 200
+    if request.method == 'DELETE':
+        db.session.delete(user_one_favorite_species)
+        db.session.commit()
+        return jsonify({'msg': 'Favorite species with ID {} deleted from favorites of user with ID {}'.format(species_id, user_id)})
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
