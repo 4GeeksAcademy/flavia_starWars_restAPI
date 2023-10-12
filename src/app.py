@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species, Starships_Films, Starships_Characters, Planets_Films
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species, Starships_Films, Starships_Characters, Planets_Films, Films_Characters
 #from models import Person
 
 app = Flask(__name__)
@@ -214,10 +214,12 @@ def handle_newfilm():
         for film in films:
             related_starships = [starship.starship_data.serialize() for starship in film.related_starships]
             related_films = [planet.planet_data.serialize() for planet in film.related_planets]
+            related_characters = [character.character_data.serialize() for character in film.related_characters]
             films_with_related_starships.append({
                 "film_data": film.serialize(),
                 "related_starships": related_starships,
-                "related_planets": related_films
+                "related_planets": related_films,
+                "related_characters": related_characters
             })
         return jsonify(films_with_related_starships)
 
@@ -267,9 +269,11 @@ def handle_allcharacters():
         characters_with_related_starships = []
         for character in characters:
             related_starships = [starship.starship_data.serialize() for starship in character.related_starships]
+            related_films = [film.film_data.serialize() for film in character.related_films]
             characters_with_related_starships.append({
                 "character_data": character.serialize(),
-                "related_starships": related_starships
+                "related_starships": related_starships,
+                "related films": related_films
             })
         return jsonify(characters_with_related_starships)
 
@@ -791,6 +795,60 @@ def handle_one_planet_film(relationship_id):
         db.session.delete(one_planet_film)
         db.session.commit()
         return jsonify({'msg': 'Deleted relationship planet/film with ID {}'.format(relationship_id)})
+    
+# ENPOINTS DE FILMS_CHARACTERS
+# (get) para obtener todas las relaciones entre films y characters y (post) para agregar una nueva relación entre films y characters -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/films_characters', methods=['GET', 'POST'])
+def handle_all_films_characters():
+    if request.method == 'GET':
+        all_films_characters = Films_Characters.query.all()
+        all_films_characters_serialized = list(map(lambda x: x.serialize(), all_films_characters))
+        return jsonify(all_films_characters_serialized), 200
+    if request.method == 'POST':
+        body = request.get_json(silent=True)
+        if body is None: 
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'film_id' not in body:
+            return jsonify({'msg': 'Specify film_id'}), 400
+        if 'character_id' not in body:
+            return jsonify({'msg': 'Specify character_id'})
+        if (Films_Characters.query.filter_by(film_id = body['film_id'], character_id = body['character_id']).first()):
+            return jsonify({'msg': 'Relationship already exists'}), 400
+        if not (Films.query.filter_by(id = body['film_id']).first() and Characters.query.filter_by(id = body['character_id']).first()):
+            return jsonify({'msg': 'Invalid film_id or character_id'})
+        new_film_character = Films_Characters()
+        new_film_character.film_id = body['film_id']
+        new_film_character.character_id = body['character_id']
+        db.session.add(new_film_character)
+        db.session.commit()
+        return jsonify({'msg': 'Relationship successfully added'}), 200
+
+# (get) para obtener una relación film/character específica y (delete) para eliminar una relación film/character específica
+@app.route('/films_characters/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_one_film_character(relationship_id):
+    one_film_character = Films_Characters.query.filter_by(id = relationship_id).first()
+    if one_film_character is None:
+        return jsonify({'msg': 'Invalid relationship id'})
+    if request.method == 'GET':
+        return jsonify(one_film_character.serialize()), 200
+    if request.method == 'PUT':
+        body = request.get_json(silent=True)
+        if body is None: 
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'film_id' in body:
+            if not (Films.query.filter_by(id = body['film_id']).first()):
+                return jsonify({'msg': 'Invalid film_id'})
+            one_film_character.film_id = body['film_id']
+        if 'character_id' in body:
+            if not (Characters.query.filter_by(id = body['character_id']).first()):
+                return jsonify({'msg': 'Invalid character_id'})
+            one_film_character.character_id = body['character_id']
+        db.session.commit()
+        return jsonify({'msg':'Updated relationship film/character with ID {}'.format(relationship_id)}), 200
+    if request.method == 'DELETE':
+        db.session.delete(one_film_character)
+        db.session.commit()
+        return jsonify({'msg': 'Deleted relationship film/character with ID {}'.format(relationship_id)})
 
 
 # this only runs if `$ python src/app.py` is executed

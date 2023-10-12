@@ -175,9 +175,20 @@ class Films_Characters(db.Model):
     __tablename__ = 'films_characters'
     id = db.Column(db.Integer, primary_key=True)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    film_relationship = db.relationship('Films')
-    characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-    characters_relationship = db.relationship('Characters')
+    film_data = db.relationship('Films', backref = 'related_characters')
+    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    character_data = db.relationship('Characters', backref = 'related_films')
+
+    def __repr__(self):
+        return 'The relationship ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "film_data": self.film_data.serialize(),
+            "character_data": self.character_data.serialize()
+        }
+
 
 class Films_species(db.Model):
     __tablename__ = 'films_species'
