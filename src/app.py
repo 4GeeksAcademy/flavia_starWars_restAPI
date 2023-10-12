@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species, Starships_Films, Starships_Characters, Planets_Films, Films_Characters
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species, Starships_Films, Starships_Characters, Planets_Films, Films_Characters, Films_Species
 #from models import Person
 
 app = Flask(__name__)
@@ -210,18 +210,20 @@ def handle_newfilm():
         return jsonify({'msg': 'Film successfully added'}), 200
     if request.method == 'GET':
         films = Films.query.all()
-        films_with_related_starships = []
+        films_with_related = []
         for film in films:
             related_starships = [starship.starship_data.serialize() for starship in film.related_starships]
             related_films = [planet.planet_data.serialize() for planet in film.related_planets]
             related_characters = [character.character_data.serialize() for character in film.related_characters]
-            films_with_related_starships.append({
+            related_species = [species.species_data.serialize() for species in film.related_species]
+            films_with_related.append({
                 "film_data": film.serialize(),
                 "related_starships": related_starships,
                 "related_planets": related_films,
-                "related_characters": related_characters
+                "related_characters": related_characters, 
+                "related_species": related_species
             })
-        return jsonify(films_with_related_starships)
+        return jsonify(films_with_related)
 
 # (get) obtener la información de un film en concreto y (put) modificar datos de un film en concreto ---------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/films/<int:films_id>', methods=['GET', 'PUT'])
@@ -266,16 +268,16 @@ def handle_allcharacters():
     
     if request.method == 'GET':
         characters = Characters.query.all()
-        characters_with_related_starships = []
+        characters_with_related = []
         for character in characters:
             related_starships = [starship.starship_data.serialize() for starship in character.related_starships]
             related_films = [film.film_data.serialize() for film in character.related_films]
-            characters_with_related_starships.append({
+            characters_with_related.append({
                 "character_data": character.serialize(),
                 "related_starships": related_starships,
                 "related films": related_films
             })
-        return jsonify(characters_with_related_starships)
+        return jsonify(characters_with_related)
 
 # (get) obtener la información de un character en concreto y (put) modificar datos de un character en concreto ---------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/characters/<int:characters_id>', methods=['GET', 'PUT'])
@@ -315,8 +317,14 @@ def handle_allspecies():
         return jsonify({'msg': 'Species successfully added'}), 200
     if request.method == 'GET':
         species = Species.query.all()
-        species_serialized = list(map(lambda x: x.serialize(), species))
-        return jsonify(species_serialized), 200
+        species_with_related = []
+        for species in species:
+            related_films = [film.film_data.serialize() for film in species.related_films]
+            species_with_related.append({
+                "species_data": species.serialize(),
+                "related films": related_films
+            })
+        return jsonify(species_with_related)
 
 # (get) obtener la información de un species en concreto y (put) modificar datos de un species en concreto --------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/species/<int:species_id>', methods=['GET', 'PUT'])
@@ -828,7 +836,7 @@ def handle_all_films_characters():
 def handle_one_film_character(relationship_id):
     one_film_character = Films_Characters.query.filter_by(id = relationship_id).first()
     if one_film_character is None:
-        return jsonify({'msg': 'Invalid relationship id'})
+        return jsonify({'msg': 'Invalid relationship id'}), 400
     if request.method == 'GET':
         return jsonify(one_film_character.serialize()), 200
     if request.method == 'PUT':
@@ -837,19 +845,72 @@ def handle_one_film_character(relationship_id):
             return jsonify({'msg': 'Body cannot be empty'}), 400
         if 'film_id' in body:
             if not (Films.query.filter_by(id = body['film_id']).first()):
-                return jsonify({'msg': 'Invalid film_id'})
+                return jsonify({'msg': 'Invalid film_id'}), 400
             one_film_character.film_id = body['film_id']
         if 'character_id' in body:
             if not (Characters.query.filter_by(id = body['character_id']).first()):
-                return jsonify({'msg': 'Invalid character_id'})
+                return jsonify({'msg': 'Invalid character_id'}), 400
             one_film_character.character_id = body['character_id']
         db.session.commit()
         return jsonify({'msg':'Updated relationship film/character with ID {}'.format(relationship_id)}), 200
     if request.method == 'DELETE':
         db.session.delete(one_film_character)
         db.session.commit()
-        return jsonify({'msg': 'Deleted relationship film/character with ID {}'.format(relationship_id)})
+        return jsonify({'msg': 'Deleted relationship film/character with ID {}'.format(relationship_id)}), 200
 
+# ENPOINTS DE FILMS_SPECIES
+# (get) para obtener todas las relaciones entre films y species y (post) para agregar una nueva relación entre films y species -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/films_species', methods=['GET', 'POST'])
+def handle_all_films_species():
+    if request.method == 'GET':
+        all_films_species = Films_Species.query.all()
+        all_films_species_serialized = list(map(lambda x: x.serialize(), all_films_species))
+        return jsonify(all_films_species_serialized), 200
+    if request.method == 'POST':
+        body = request.get_json(silent=True)
+        if body is None: 
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'film_id' not in body:
+            return jsonify({'msg': 'Specify film_id'}), 400
+        if 'species_id' not in body:
+            return jsonify({'msg': 'Specify species_id'}), 400
+        if (Films_Species.query.filter_by(film_id = body['film_id'], species_id = body['species_id']).first()):
+            return jsonify({'msg': 'Relationship already exists'}), 400
+        if not (Films.query.filter_by(id = body['film_id']).first() and Species.query.filter_by(id = body['species_id']).first()):
+            return jsonify({'msg': 'Invalid film_id or species_id'}), 400
+        new_film_species = Films_Species()
+        new_film_species.film_id = body['film_id']
+        new_film_species.species_id = body['species_id']
+        db.session.add(new_film_species)
+        db.session.commit()
+        return jsonify({'msg': 'Relationship successfully added'}), 200
+
+# (get) para obtener una relación film/species específica y (delete) para eliminar una relación film/species específica
+@app.route('/films_species/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_one_film_species(relationship_id):
+    one_film_species = Films_Species.query.filter_by(id = relationship_id).first()
+    if one_film_species is None:
+        return jsonify({'msg': 'Invalid relationship id'}), 400
+    if request.method == 'GET':
+        return jsonify(one_film_species.serialize()), 200
+    if request.method == 'PUT':
+        body = request.get_json(silent=True)
+        if body is None: 
+            return jsonify({'msg': 'Body cannot be empty'}), 400
+        if 'film_id' in body:
+            if not (Films.query.filter_by(id = body['film_id']).first()):
+                return jsonify({'msg': 'Invalid film_id'}), 400
+            one_film_species.film_id = body['film_id']
+        if 'species_id' in body:
+            if not (Species.query.filter_by(id = body['species_id']).first()):
+                return jsonify({'msg': 'Invalid species_id'}), 400
+            one_film_species.species_id = body['species_id']
+        db.session.commit()
+        return jsonify({'msg':'Updated relationship film/species with ID {}'.format(relationship_id)}), 200
+    if request.method == 'DELETE':
+        db.session.delete(one_film_species)
+        db.session.commit()
+        return jsonify({'msg': 'Deleted relationship film/species with ID {}'.format(relationship_id)}), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':

@@ -190,13 +190,24 @@ class Films_Characters(db.Model):
         }
 
 
-class Films_species(db.Model):
+class Films_Species(db.Model):
     __tablename__ = 'films_species'
     id = db.Column(db.Integer, primary_key=True)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    film_relationship = db.relationship('Films')
+    film_data = db.relationship('Films', backref = 'related_species')
     species_id = db.Column(db.Integer, db.ForeignKey('species.id'))
-    species_relationship = db.relationship('Species')
+    species_data = db.relationship('Species', backref = 'related_films')
+
+    def __repr__(self):
+        return 'The relationship ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "film_data": self.film_data.serialize(),
+            "species_data": self.species_data.serialize()
+        }
+
 
 class Favorite_Films(db.Model):
     __tablename__ = 'favorite_films'
