@@ -42,17 +42,38 @@ class Starships_Films(db.Model):
     __tablename__ = 'starships_films'
     id = db.Column(db.Integer, primary_key=True)
     starship_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
-    starship_relationship = db.relationship('Starships')
-    films_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    films_relationship = db.relationship('Films')
+    starship_data = db.relationship('Starships', backref='related_films')
+    film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
+    film_data = db.relationship('Films', backref='related_starships')
+
+    def __repr__(self):
+        return 'The relationship ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "starship_data": self.starship_data.serialize(),
+            "film_data": self.films_data.serialize()
+        }
 
 class Starships_Characters(db.Model):
     __tablename__ = 'starships_characters'
     id = db.Column(db.Integer, primary_key=True)
     starship_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
-    starship_relationship = db.relationship('Starships')
-    characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-    characters_relationship = db.relationship('Characters')
+    starship_data = db.relationship('Starships', backref = 'related_characters')
+    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    character_data = db.relationship('Characters', backref = 'related_starships')
+
+    def __repr__(self):
+        return 'The relationship ID is{}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "starship_data": self.starship_data.serialize(),
+            "character_data": self.character_data.serialize()
+        }
+
 
 class Favorite_Starships(db.Model):
     __tablename__ = 'favorite_starships'
@@ -193,7 +214,7 @@ class Characters(db.Model):
             "id": self.id, 
             "name": self.name,
             "planet_data": self.planet_data.serialize(),
-            "species_data": self.species_data.serialize()
+            "species_data": self.species_data.serialize_without_planet()
         }
 
 class Favorite_Characters(db.Model):
@@ -234,6 +255,12 @@ class Species(db.Model):
             "name": self.name,
             "classification": self.classification,
             "planet_data": self.planet_data.serialize()
+        }
+    def serialize_without_planet(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "classification": self.classification,
         }
 
 class Favorite_Species(db.Model):
