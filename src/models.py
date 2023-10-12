@@ -21,6 +21,7 @@ class User(db.Model):
             "email": self.email,
         }
 
+# STARSHIPS --------------------------------------------------------------------------------------------------------------------------------------------------------
 class Starships(db.Model):
     __tablename__ = 'starships'
     id = db.Column(db.Integer, primary_key=True)
@@ -71,6 +72,8 @@ class Favorite_Starships(db.Model):
             "user_id": self.user_id
         }
 
+# PLANETS --------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class Planets(db.Model):
     __tablename__ = 'planets'
     id = db.Column(db.Integer, primary_key=True)
@@ -78,7 +81,7 @@ class Planets(db.Model):
     rotation_period = db.Column(db.String(50), nullable=False)
     climate = db.Column(db.String(50), nullable=False)
     characters_relationship = db.relationship('Characters')
-    species_relationship = db.relationship('Species', back_populates="planet_name")
+    species_relationship = db.relationship('Species', back_populates="planet_data")
 
     def __repr__(self):
         return '{}'.format(self.name)
@@ -117,6 +120,7 @@ class Favorite_Planets(db.Model):
             "user_id": self.user_id
         }
 
+# FILMS --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class Films(db.Model):
     __tablename__ = 'films'
@@ -170,13 +174,16 @@ class Favorite_Films(db.Model):
             "user_id": self.user_id
         }
 
+# CHARACTERS --------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class Characters(db.Model):
     __tablename__ = 'characters'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
-    planet = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    planet_data = relationship('Planets', back_populates='characters_relationship')
     species_id = db.Column(db.Integer, db.ForeignKey('species.id'))
-    species_name = relationship('Species', back_populates='character_relationship')
+    species_data = relationship('Species', back_populates='characters_relationship')
 
     def __repr__(self):
         return '{}'.format(self.name)
@@ -185,8 +192,8 @@ class Characters(db.Model):
         return {
             "id": self.id, 
             "name": self.name,
-            "planet": self.planet,
-            "species": self.species_id
+            "planet_data": self.planet_data.serialize(),
+            "species_data": self.species_data.serialize()
         }
 
 class Favorite_Characters(db.Model):
@@ -207,14 +214,16 @@ class Favorite_Characters(db.Model):
             "user_id": self.id
         }
 
+# SPECIES ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class Species(db.Model):
     __tablename__ = 'species'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     classification = db.Column(db.String(50))
     planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
-    planet_name = relationship('Planets', back_populates="species_relationship")
-    character_relationship = relationship('Characters', back_populates="species_name")
+    planet_data = relationship('Planets', back_populates="species_relationship")
+    characters_relationship = relationship('Characters', back_populates="species_data")
 
     def __repr__(self):
         return '{}'.format(self.name)
@@ -224,7 +233,7 @@ class Species(db.Model):
             "id": self.id,
             "name": self.name,
             "classification": self.classification,
-            "planet": self.planet_id
+            "planet_data": self.planet_data.serialize()
         }
 
 class Favorite_Species(db.Model):

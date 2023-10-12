@@ -37,9 +37,9 @@ def sitemap():
     return generate_sitemap(app)
 
 
-# endpoints de tablas únicas ###################################################################################################################################
+# endpoints de tablas únicas ########################################################################################################################################################################
 # ENDPOINTS DE USER
-# (post) agregar nuevos usuarios y (get) obtener todos los usuarios agregados
+# (post) agregar nuevos usuarios y (get) obtener todos los usuarios agregados ------------------------------------------------------------------------------------------------------------------------
 @app.route('/user', methods=['POST', 'GET'])
 def handle_allusers():
     if request.method == 'POST':
@@ -64,8 +64,7 @@ def handle_allusers():
         users_serialized = list(map(lambda x: x.serialize(), users))
         return jsonify(users_serialized)
 
-# (get) obtener la información de un usuario en concreto y (put) modificar datos de un usuario en concreto
-@app.route('/user/<int:user_id>', methods=['GET', 'PUT'])
+# (get) obtener la información de un usuario en concreto y (put) modificar datos de un usuario en concreto ------------------------------------------------------------------------------------------------------
 def handle_user(user_id):
     user = User.query.get(user_id)
     if user is None:
@@ -86,7 +85,7 @@ def handle_user(user_id):
         return jsonify({'msg': 'Updated user with ID {}'.format(user_id)}), 200
 
 # ENDPOINTS DE STARSHIPS
-# (post) agregar nuevos starships y (get) obtener todos los starships agregados
+# (post) agregar nuevos starships y (get) obtener todos los starships agregados ---------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/starships', methods=['POST', 'GET'])
 def handle_allstarships():
     if request.method == 'POST':
@@ -108,7 +107,7 @@ def handle_allstarships():
         starships_serialized = list(map(lambda x: x.serialize(), starships))
         return jsonify(starships_serialized)
 
-# (get) obtener la información de un starship en concreto y (put) modificar datos de un starship en concreto
+# (get) obtener la información de un starship en concreto y (put) modificar datos de un starship en concreto -----------------------------------------------------------------------------------------------------------------
 @app.route('/starships/<int:starships_id>', methods=['GET', 'PUT'])
 def handle_starship(starships_id):
     starship = Starships.query.get(starships_id)
@@ -128,7 +127,7 @@ def handle_starship(starships_id):
         return jsonify({'msg': 'Updated starship with ID {}'.format(starships_id)})
 
 # ENDPOINTS DE PLANETS
-# (post) agregar nuevos planets y (get) obtener todos los planets agregados
+# (post) agregar nuevos planets y (get) obtener todos los planets agregados --------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/planets', methods=['POST', 'GET'])
 def handle_allplanets():
     if request.method == 'POST':
@@ -153,7 +152,7 @@ def handle_allplanets():
         planets_serialized = list(map(lambda x: x.serialize(), planets))
         return jsonify(planets_serialized)
 
-# (get) obtener la información de un planeta en concreto y (put) modificar datos de un planeta en concreto
+# (get) obtener la información de un planeta en concreto y (put) modificar datos de un planeta en concreto ------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/planets/<int:planets_id>', methods=['GET', 'PUT'])
 def handle_planet(planets_id):
     planets = Planets.query.get(planets_id)
@@ -175,7 +174,7 @@ def handle_planet(planets_id):
         return jsonify({'msg': 'Updated planet with ID {}'.format(planets_id)})
 
 # ENDPOINTS DE FILMS
-# (post) agregar nuevos films y (get) obtener todos los films agregados
+# (post) agregar nuevos films y (get) obtener todos los films agregados -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/films', methods=['POST', 'GET'])
 def handle_newfilm():
     if request.method == 'POST':
@@ -200,7 +199,7 @@ def handle_newfilm():
         films_serialized = list(map(lambda x: x.serialize(), films))
         return jsonify(films_serialized)
 
-# (get) obtener la información de un film en concreto y (put) modificar datos de un film en concreto
+# (get) obtener la información de un film en concreto y (put) modificar datos de un film en concreto ---------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/films/<int:films_id>', methods=['GET', 'PUT'])
 def handle_film(films_id):
     film = Films.query.get(films_id)
@@ -220,7 +219,7 @@ def handle_film(films_id):
         return jsonify({'msg': 'Updated film with ID {}'.format(films_id)}), 200
 
 # ENDPOINTS DE CHARACTERS
-# (post) agregar nuevos characters y (get) obtener todos los characters agregados
+# (post) agregar nuevos characters y (get) obtener todos los characters agregados -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/characters', methods=['POST', 'GET'])
 def handle_allcharacters():
     if request.method == 'POST':
@@ -230,10 +229,13 @@ def handle_allcharacters():
         if "name" not in body:
             return jsonify({'msg': 'Specify name'}), 400
         if "species_id" not in body:
-            return jsonify({'msg': 'Specify species'}), 400
+            return jsonify({'msg': 'Specify species_id'}), 400
+        if "planet_id" not in body:
+            return jsonify({'msg': 'Specify planet_id'})
         character = Characters()
         character.name = body['name']
         character.species_id = body['species_id']
+        character.planet_id = body['planet_id']
         db.session.add(character)
         db.session.commit()
         return jsonify({'msg': 'Character successfully added'}), 200
@@ -243,7 +245,7 @@ def handle_allcharacters():
         characters_serialized = list(map(lambda x: x.serialize(), characters))
         return jsonify(characters_serialized), 200
 
-# (get) obtener la información de un character en concreto y (put) modificar datos de un character en concreto
+# (get) obtener la información de un character en concreto y (put) modificar datos de un character en concreto ---------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/characters/<int:characters_id>', methods=['GET', 'PUT'])
 def handle_character(characters_id):
     character = Characters.query.get(characters_id)
@@ -259,7 +261,7 @@ def handle_character(characters_id):
             return jsonify({'msg': 'Updated character with ID {}'.format(characters_id)}), 200
 
 # ENPOINTS DE SPECIES
-# (post) agregar nuevos species y (get) obtener todos los species agregados
+# (post) agregar nuevos species y (get) obtener todos los species agregados --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/species', methods=['POST', 'GET'])
 def handle_allspecies():
     if request.method == 'POST':
@@ -284,7 +286,7 @@ def handle_allspecies():
         species_serialized = list(map(lambda x: x.serialize(), species))
         return jsonify(species_serialized), 200
 
-# (get) obtener la información de un species en concreto y (put) modificar datos de un species en concreto
+# (get) obtener la información de un species en concreto y (put) modificar datos de un species en concreto --------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/species/<int:species_id>', methods=['GET', 'PUT'])
 def handle_species(species_id):
     species = Species.query.get(species_id)
@@ -301,7 +303,7 @@ def handle_species(species_id):
         db.session.commit()
         return jsonify({'msg': 'Updated species with ID {}'.format(species_id)})
 
-# endspoints de las tablas de favoritos ########################################################################################################################################################
+# endspoints de las tablas de favoritos ##########################################################################################################################################################################################
 # ENDPOINTS DE FAVORITES STARSHIPS
 # admin endpoint // (get) ver todas las starships favoritas con sus usuarios correspondientes
 @app.route('/favorite_starships', methods=['GET'])
@@ -310,7 +312,7 @@ def handle_allfavoritestarships():
     all_favorite_starships_serialized = list(map(lambda x: x.serialize(), all_favorite_starships))
     return jsonify(all_favorite_starships_serialized), 200
 
-# admin endpoint // (get) para ver todas las veces que una starship en concreta fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una starship en concreta
+# admin endpoint // (get) para ver todas las veces que una starship en concreta fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una starship en concreta -------------------------------------------------------------------------------
 @app.route('/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
 def handle_favoritestarship(starship_id):
     favorite_starships = Favorite_Starships.query.filter_by(starship_id = starship_id)
@@ -326,7 +328,7 @@ def handle_favoritestarship(starship_id):
         db.session.commit()
         return jsonify({'msg': 'Favorite Starships with ID {} succefully deleted'.format(starship_id)})
 
-# (post) agregar starship a un usuario en concreto y (get) ver las starships favoritas de un usuario en concreto
+# (post) agregar starship a un usuario en concreto y (get) ver las starships favoritas de un usuario en concreto ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_starships', methods=['GET', 'POST'])
 def handle_userfavoritestarships(user_id):
     if request.method == 'POST':
@@ -350,7 +352,7 @@ def handle_userfavoritestarships(user_id):
         user_favorite_starship_serialized = list(map(lambda x: x.serialize(), user_favorite_starship))
         return jsonify(user_favorite_starship_serialized), 200
 
-# (get) para ver individualmente el starship concreto de un user concreto y (delete) para eliminar un starship concreto de los favoritos de un user concreto
+# (get) para ver individualmente el starship concreto de un user concreto y (delete) para eliminar un starship concreto de los favoritos de un user concreto --------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'])
 def handle_userfavoritestarship(user_id, starship_id):
     user_favorite_starship = Favorite_Starships.query.filter_by(starship_id = starship_id, user_id = user_id).first()
@@ -372,7 +374,7 @@ def handle_allfavoriteplanets():
     all_favorite_planets_serialized = list(map(lambda x: x.serialize(), all_favorite_planets))
     return jsonify(all_favorite_planets_serialized), 200
 
-# admin endpoint // (get) para ver todas las veces que un planet en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un planet en concreto
+# admin endpoint // (get) para ver todas las veces que un planet en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un planet en concreto --------------------------------------------------------------------------------------------------------------------------------
 @app.route('/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
 def handle_favoriteplanets(planet_id):
     favorite_planets = Favorite_Planets.query.filter_by(planet_id = planet_id)
@@ -387,7 +389,7 @@ def handle_favoriteplanets(planet_id):
         db.session.commit()
         return jsonify({'msg': 'Favorite Planets with ID {} successfully delete'.format(planet_id)}), 200
 
-# (post) agregar planets a un usuario en concreto y (get) ver los planets favoritos de un usuario en concreto
+# (post) agregar planets a un usuario en concreto y (get) ver los planets favoritos de un usuario en concreto --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_planets', methods=['GET', 'POST'])
 def handle_userfavoriteplanets(user_id):
     if request.method == 'POST':
@@ -411,7 +413,7 @@ def handle_userfavoriteplanets(user_id):
         user_favorite_planet_serialized = list(map(lambda x: x.serialize(), user_favorite_planet))
         return jsonify(user_favorite_planet_serialized), 200
 
-# (get) para ver individualmente el planet concreto de un user concreto y (delete) para eliminar un planet concreto de los favoritos de un user concreto
+# (get) para ver individualmente el planet concreto de un user concreto y (delete) para eliminar un planet concreto de los favoritos de un user concreto ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'])
 def handle_userfavoriteplanet(user_id, planet_id):
     user_favorite_planet = Favorite_Planets.query.filter_by(user_id = user_id, planet_id = planet_id).first()
@@ -433,7 +435,7 @@ def handle_allfavoritefilms():
     all_favorite_films_serialized = list(map(lambda x: x.serialize(), all_favorite_films))
     return jsonify(all_favorite_films_serialized), 200
 
-# admin endpoint // (get) para ver todas las veces que un film en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un film en concreto
+# admin endpoint // (get) para ver todas las veces que un film en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un film en concreto --------------------------------------------------------------------------------------------------------------------------------
 @app.route('/favorite_films/<int:film_id>', methods=['GET', 'DELETE'])
 def handle_favoritefilm(film_id):
     favorite_film = Favorite_Films.query.filter_by(film_id = film_id)
@@ -448,7 +450,7 @@ def handle_favoritefilm(film_id):
         db.session.commit()
         return jsonify({'msg': 'Favorite Films with ID {} successfully deleted'.format(film_id)})
     
-# (post) agregar films a un usuario en concreto y (get) ver los films favoritos de un usuario en concreto
+# (post) agregar films a un usuario en concreto y (get) ver los films favoritos de un usuario en concreto ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_films', methods=['POST', 'GET'])
 def handle_userfavoritefilms(user_id):
     if request.method == 'POST':
@@ -472,7 +474,7 @@ def handle_userfavoritefilms(user_id):
         user_favorite_film_serialized = list(map(lambda x: x.serialize(), user_favorite_film))
         return jsonify(user_favorite_film_serialized), 200
     
-# (get) para ver individualmente el film concreto de un user concreto y (delete) para eliminar un film concreto de los favoritos de un user concreto
+# (get) para ver individualmente el film concreto de un user concreto y (delete) para eliminar un film concreto de los favoritos de un user concreto -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_films/<int:film_id>', methods=['GET', 'DELETE'])
 def handle_userfavoritefilm(user_id, film_id): 
     user_favorite_film = Favorite_Films.query.filter_by(user_id = user_id, film_id = film_id).first()
@@ -492,7 +494,7 @@ def handle_allfavoritecharacters():
     all_favorite_characters_serialized = list(map(lambda x: x.serialize(), all_favorite_characters))
     return jsonify(all_favorite_characters_serialized), 200
 
-# admin endpoint // (get) para ver todas las veces que un character en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un character en concreto
+# admin endpoint // (get) para ver todas las veces que un character en concreto fue agregado a favoritos y (delete) eliminar de favoritos todas las instancias que contengan un character en concreto --------------------------------------------------------------------------------------------------------------------------------
 @app.route('/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'])
 def handle_favoritecharacter(character_id):
     favorite_characters = Favorite_Characters.query.filter_by(character_id = character_id)
@@ -505,7 +507,7 @@ def handle_favoritecharacter(character_id):
         db.session.commit()
         return jsonify({'msg': 'Favorite character with ID {} successfully deleted'.format(character_id)}), 200
     
-# (post) agregar characters a un usuario en concreto y (get) ver los characters favoritos de un usuario en concreto
+# (post) agregar characters a un usuario en concreto y (get) ver los characters favoritos de un usuario en concreto -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_characters', methods=['POST', 'GET'])
 def handle_userfavoritecharacters(user_id):
     if request.method == 'POST':
@@ -529,7 +531,7 @@ def handle_userfavoritecharacters(user_id):
         user_favorite_characters_serialized = list(map(lambda x: x.serialize(), user_favorite_characters))
         return jsonify(user_favorite_characters_serialized)
 
-# (get) para ver individualmente el character concreto de un user concreto y (delete) para eliminar un character concreto de los favoritos de un user concreto
+# (get) para ver individualmente el character concreto de un user concreto y (delete) para eliminar un character concreto de los favoritos de un user concreto --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'])
 def handle_userfavoritecharacter(user_id, character_id):
     user_favorite_character = Favorite_Characters.query.filter_by(user_id = user_id, character_id = character_id).first()
@@ -543,14 +545,14 @@ def handle_userfavoritecharacter(user_id, character_id):
         return ({'msg': 'Favorite character with ID {} deleted from favorites of user with ID {}'.format(character_id, user_id)})
 
 # ENDPOINTS DE FAVORITE_SPECIES
-# admin endpoint // (get) ver todos las species favoritas con sus usuarios correspondientes
+# admin endpoint // (get) ver todos las species favoritas con sus usuarios correspondientes ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/favorite_species', methods=['GET'])
 def handle_all_favorite_species():
     all_favorite_species = Favorite_Species.query.all()
     all_favorite_species_serialized = list(map(lambda x: x.serialize(), all_favorite_species))
     return jsonify(all_favorite_species_serialized), 200
 
-# admin endpoint // (get) para ver todas las veces que una species en concreto fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una species en concreto
+# admin endpoint // (get) para ver todas las veces que una species en concreto fue agregada a favoritos y (delete) eliminar de favoritos todas las instancias que contengan una species en concreto --------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/favorite_species/<int:species_id>', methods=['GET', 'DELETE'])
 def handle_favorite_species_group(species_id):
     favorite_species = Favorite_Species.query.filter_by(species_id = species_id)
@@ -565,7 +567,7 @@ def handle_favorite_species_group(species_id):
         db.session.commit()
         return jsonify({'msg': 'Favorite species with ID {} successfully deleted'.format(species_id)}), 200
 
-# (post) agregar species a un usuario en concreto y (get) ver las species favoritos de un usuario en concreto
+# (post) agregar species a un usuario en concreto y (get) ver las species favoritos de un usuario en concreto -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_species', methods=['POST', 'GET'])
 def handle_user_all_favorite_species(user_id):
     if request.method == 'POST':
@@ -587,7 +589,7 @@ def handle_user_all_favorite_species(user_id):
         user_favorite_species_serialized = list(map(lambda x: x.serialize(), user_favorite_species))
         return jsonify(user_favorite_species_serialized), 200
 
-# (get) para ver individualmente las species concretas de un user concreto y (delete) para eliminar una species concreta de los favoritos de un user concreto
+# (get) para ver individualmente las species concretas de un user concreto y (delete) para eliminar una species concreta de los favoritos de un user concreto -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorite_species/<int:species_id>', methods=['GET', 'DELETE'])
 def handle_user_one_favorite_species(user_id, species_id):
     user_one_favorite_species = Favorite_Species.query.filter_by(user_id = user_id, species_id = species_id).first()
