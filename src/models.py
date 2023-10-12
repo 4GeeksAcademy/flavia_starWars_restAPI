@@ -119,9 +119,19 @@ class Planets_Films(db.Model):
     __tablename__ = 'planets_films'
     id = db.Column(db.Integer, primary_key=True)
     planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
-    planet_relationship = db.relationship('Planets')
-    films_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    films_relationship = db.relationship('Films')
+    planet_data = db.relationship('Planets', backref = 'related_films')
+    film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
+    film_data = db.relationship('Films', backref = 'related_planets')
+
+    def __repr__(self):
+        return 'The relationship ID is {}'.format(self.id)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "planet_data": self.planet_data.serialize(),
+            "film_data": self.film_data.serialize()
+        }
 
 class Favorite_Planets(db.Model):
     __tablename__ = 'favorite_planets'
