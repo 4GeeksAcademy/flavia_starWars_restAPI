@@ -88,9 +88,8 @@ class Favorite_Starships(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "starship_id": self.starship_id,
-            "user_id": self.user_id
+            "favorite_id": self.id,
+            "starship_data": self.starship_relationship.serialize()
         }
 
 # PLANETS --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -146,9 +145,8 @@ class Favorite_Planets(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "planet_id": self.planet_id,
-            "user_id": self.user_id
+            "favorite_id": self.id,
+            "planet_data": self.planet_relationship.serialize()
         }
 
 # FILMS --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -222,9 +220,8 @@ class Favorite_Films(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "film_id": self.film_id,
-            "user_id": self.user_id
+            "favorite_id": self.id,
+            "film_data": self.film_relationship.serialize()
         }
 
 # CHARACTERS --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -262,9 +259,8 @@ class Favorite_Characters(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "character_id": self.character_id,
-            "user_id": self.id
+            "favorite_id": self.id,
+            "character_data": self.character_id_relationship.serialize()
         }
 
 # SPECIES ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -308,9 +304,8 @@ class Favorite_Species(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "species_id": self.id,
-            "user_id": self.user_id
+            "favorite_id": self.id,
+            "species_data": self.species_id_relationship.serialize()
         }
 
 

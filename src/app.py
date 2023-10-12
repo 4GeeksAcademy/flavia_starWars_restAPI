@@ -65,6 +65,7 @@ def handle_allusers():
         return jsonify(users_serialized)
 
 # (get) obtener la información de un usuario en concreto y (put) modificar datos de un usuario en concreto ------------------------------------------------------------------------------------------------------
+@app.route('/user/<int:user_id>', methods=['GET', 'PUT'])
 def handle_user(user_id):
     user = User.query.get(user_id)
     if user is None:
@@ -83,6 +84,29 @@ def handle_user(user_id):
             user.email = body['email']
         db.session.commit()
         return jsonify({'msg': 'Updated user with ID {}'.format(user_id)}), 200
+
+@app.route('/user/<int:user_id>/favorites', methods=['GET'])
+def handle_user_all_favorites(user_id):
+    user_favorite_starships = Favorite_Starships.query.filter_by(user_id = user_id).all()
+    user_favorite_starships_serialized = list(map(lambda x: x.serialize(), user_favorite_starships))
+    user_favorite_planets = Favorite_Planets.query.filter_by(user_id = user_id).all()
+    user_favorite_planets_serialized = list(map(lambda x: x.serialize(), user_favorite_planets))
+    user_favorite_films = Favorite_Films.query.filter_by(user_id = user_id).all()
+    user_favorite_films_serialized = list(map(lambda x: x.serialize(), user_favorite_films))
+    user_favorite_characters = Favorite_Characters.query.filter_by(user_id = user_id).all()
+    user_favorite_characters_serialized = list(map(lambda x: x.serialize(), user_favorite_characters))
+    user_favorite_species = Favorite_Species.query.filter_by(user_id = user_id).all()
+    user_favorite_species_serialized = list(map(lambda x: x.serialize(), user_favorite_species))
+
+    favorites = {
+        "favorite_starships": user_favorite_starships_serialized,
+        "favorite_planets": user_favorite_planets_serialized,
+        "favorite_characters": user_favorite_characters_serialized,
+        "favorite_films": user_favorite_films_serialized,
+        "favorite_species": user_favorite_species_serialized
+    }
+
+    return jsonify(favorites), 200
 
 # ENDPOINTS DE STARSHIPS
 # (post) agregar nuevos starships y (get) obtener todos los starships agregados ---------------------------------------------------------------------------------------------------------------------------------------
