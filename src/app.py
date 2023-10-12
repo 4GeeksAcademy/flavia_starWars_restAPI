@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species
+from models import db, User, Starships, Planets, Films, Characters, Species, Favorite_Starships, Favorite_Planets, Favorite_Films, Favorite_Characters, Favorite_Species, Starships_Films
 #from models import Person
 
 app = Flask(__name__)
@@ -36,6 +36,8 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+# endpoints de tablas únicas ###################################################################################################################################
 # ENDPOINTS DE USER
 # (post) agregar nuevos usuarios y (get) obtener todos los usuarios agregados
 @app.route('/user', methods=['POST', 'GET'])
@@ -124,7 +126,7 @@ def handle_starship(starships_id):
             starship.model = body['model']  
         db.session.commit()
         return jsonify({'msg': 'Updated starship with ID {}'.format(starships_id)})
-    
+
 # ENDPOINTS DE PLANETS
 # (post) agregar nuevos planets y (get) obtener todos los planets agregados
 @app.route('/planets', methods=['POST', 'GET'])
@@ -225,8 +227,13 @@ def handle_allcharacters():
         body = request.get_json(silent=True)
         if body is None: 
             return jsonify({'msg': 'Body cannot be empty'}), 400
+        if "name" not in body:
+            return jsonify({'msg': 'Specify name'}), 400
+        if "species_id" not in body:
+            return jsonify({'msg': 'Specify species'}), 400
         character = Characters()
         character.name = body['name']
+        character.species_id = body['species_id']
         db.session.add(character)
         db.session.commit()
         return jsonify({'msg': 'Character successfully added'}), 200
@@ -259,9 +266,16 @@ def handle_allspecies():
         body = request.get_json(silent=True)
         if body is None:
             return jsonify({'msg': 'Body cannot be empty'}), 400
+        if "name" not in body:
+            return jsonify({'msg': 'Specify name'}), 400
+        if "classification" not in body:
+            return jsonify({'msg': 'Specify classification'}), 400
+        if "planet_id" not in body:
+            return jsonify({'msg': 'Specify planet'}), 400
         species = Species()
         species.name = body['name']
         species.classification = body['classification']
+        species.planet_id = body['planet_id']
         db.session.add(species)
         db.session.commit()
         return jsonify({'msg': 'Species successfully added'}), 200
@@ -287,6 +301,7 @@ def handle_species(species_id):
         db.session.commit()
         return jsonify({'msg': 'Updated species with ID {}'.format(species_id)})
 
+# endspoints de las tablas de favoritos ########################################################################################################################################################
 # ENDPOINTS DE FAVORITES STARSHIPS
 # admin endpoint // (get) ver todas las starships favoritas con sus usuarios correspondientes
 @app.route('/favorite_starships', methods=['GET'])
@@ -582,6 +597,11 @@ def handle_user_one_favorite_species(user_id, species_id):
         db.session.delete(user_one_favorite_species)
         db.session.commit()
         return jsonify({'msg': 'Favorite species with ID {} deleted from favorites of user with ID {}'.format(species_id, user_id)})
+
+
+
+
+
 
 
 

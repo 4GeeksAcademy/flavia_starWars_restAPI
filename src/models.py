@@ -3,21 +3,6 @@ from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
-class Usuario(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
-        }
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
 
     def __repr__(self):
-        return 'The user name is {}'.format(self.name)
+        return '{}'.format(self.name)
     
     def serialize(self):
         return {
@@ -43,7 +28,7 @@ class Starships(db.Model):
     model = db.Column(db.String(100), unique=False, nullable=False)
 
     def __repr__(self):
-        return 'The name of the spaceship is {}'.format(self.name)
+        return '{}'.format(self.name)
 
     def serialize(self):
         return {
@@ -93,10 +78,10 @@ class Planets(db.Model):
     rotation_period = db.Column(db.String(50), nullable=False)
     climate = db.Column(db.String(50), nullable=False)
     characters_relationship = db.relationship('Characters')
-    species_relationship = db.relationship('Species')
+    species_relationship = db.relationship('Species', back_populates="planet_name")
 
     def __repr__(self):
-        return 'The name of the planet is {}'.format(self.name)
+        return '{}'.format(self.name)
     
     def serialize(self):
         return {
@@ -141,7 +126,7 @@ class Films(db.Model):
     director = db.Column(db.String(50))
 
     def __repr__(self):
-        return 'The name of the film is {}'.format(self.title)
+        return '{}'.format(self.title)
     
     def serialize(self):
         return {
@@ -190,15 +175,18 @@ class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
     planet = db.Column(db.Integer, db.ForeignKey('planets.id'))
-    character = db.relationship('Species')
+    species_id = db.Column(db.Integer, db.ForeignKey('species.id'))
+    species_name = relationship('Species', back_populates='character_relationship')
 
     def __repr__(self):
-        return 'The name of the character is {}'.format(self.name)
+        return '{}'.format(self.name)
     
     def serialize(self):
         return {
             "id": self.id, 
-            "name": self.name
+            "name": self.name,
+            "planet": self.planet,
+            "species": self.species_id
         }
 
 class Favorite_Characters(db.Model):
@@ -224,17 +212,19 @@ class Species(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     classification = db.Column(db.String(50))
-    planet = db.Column(db.Integer, db.ForeignKey('planets.id'))
-    character = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    planet_name = relationship('Planets', back_populates="species_relationship")
+    character_relationship = relationship('Characters', back_populates="species_name")
 
     def __repr__(self):
-        return 'The name of the species is {}'.format(self.name)
+        return '{}'.format(self.name)
     
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
-            "classification": self.classification
+            "classification": self.classification,
+            "planet": self.planet_id
         }
 
 class Favorite_Species(db.Model):
