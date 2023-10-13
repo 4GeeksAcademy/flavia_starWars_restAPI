@@ -2,6 +2,31 @@
 
 # Flask Boilerplate for Junior Developers
 
+## Test ready-made endpoints :)
+
+SINGLE TABLES
+```bash
+--------- USER -----------------------
+'/user', methods=['POST', 'GET'] # (post) add new users and (get) obtain all added users
+'/user/<int:user_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular user and (put) modify data of a particular user
+'/user/<int:user_id>/favorites', methods=['GET'] # (get) to obtain the favourites of all the sections of a specific user
+--------- STARSHIPS ---------------------
+'/starships', methods=['POST', 'GET'] # (post) add new starships and (get) obtain all added starships
+'/starships/<int:starships_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given starship and (put) modify data of a given starship
+---------- PLANETS -----------------------
+'/planets', methods=['POST', 'GET'] # (post) add new planets and (get) obtain all added planets
+'/planets/<int:planets_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular planet and (put) modify data of a particular planet
+---------- FILMS -------------------------
+'/films', methods=['POST', 'GET'] # (post) add new films and (get) obtain all added films
+'/films/<int:films_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular film and (put) modify data of a particular film
+---------- CHARACTERS --------------------
+'/characters', methods=['POST', 'GET'] # (post) add new characters and (get) obtain all added characters
+'/characters/<int:characters_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given character and (put) modify data of a given character
+---------- SPECIES -----------------------
+'/species', methods=['POST', 'GET'] # (post) add new species and (get) obtain all added species
+'/species/<int:species_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given species and (put) modify data of a given species
+```
+
 Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
 
 - [Extensive documentation here](https://start.4geeksacademy.com).
