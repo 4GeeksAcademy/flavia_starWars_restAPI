@@ -85,8 +85,12 @@ def handle_user(user_id):
         db.session.commit()
         return jsonify({'msg': 'Updated user with ID {}'.format(user_id)}), 200
 
+# (get) para obtener los favoritos de todas las secciones de un usuario en concreto -------------------------------------------------------------------------------------------------------------------------------
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
 def handle_user_all_favorites(user_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({'msg': 'User do not exist'}), 400
     user_favorite_starships = Favorite_Starships.query.filter_by(user_id = user_id).all()
     user_favorite_starships_serialized = list(map(lambda x: x.serialize(), user_favorite_starships))
     user_favorite_planets = Favorite_Planets.query.filter_by(user_id = user_id).all()
@@ -101,8 +105,8 @@ def handle_user_all_favorites(user_id):
     favorites = {
         "favorite_starships": user_favorite_starships_serialized,
         "favorite_planets": user_favorite_planets_serialized,
-        "favorite_characters": user_favorite_characters_serialized,
         "favorite_films": user_favorite_films_serialized,
+        "favorite_characters": user_favorite_characters_serialized,
         "favorite_species": user_favorite_species_serialized
     }
 
