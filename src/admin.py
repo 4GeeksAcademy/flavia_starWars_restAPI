@@ -8,7 +8,8 @@ def setup_admin(app):
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
     admin = Admin(app, name='4Geeks Admin', template_mode='bootstrap3')
 
-
+    class ChildView(ModelView):
+        column_display_pk = True # optional, but I like to see the IDs in the list
     
     # Add your models here, for example this is how we add a the User model to the admin
     admin.add_view(ModelView(User, db.session))
@@ -25,7 +26,7 @@ def setup_admin(app):
     admin.add_view(ModelView(Favorite_Films, db.session))
     admin.add_view(ModelView(Characters, db.session))
     admin.add_view(ModelView(Favorite_Characters, db.session))
-    admin.add_view(ModelView(Species, db.session))
+    admin.add_view(ChildView(Species, db.session))
     admin.add_view(ModelView(Favorite_Species, db.session))
     
     

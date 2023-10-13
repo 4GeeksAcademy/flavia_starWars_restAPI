@@ -79,9 +79,9 @@ class Favorite_Starships(db.Model):
     __tablename__ = 'favorite_starships'
     id = db.Column(db.Integer, primary_key=True)
     starship_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
-    starship_relationship = db.relationship('Starships')
+    starship_data = db.relationship('Starships')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_relationship = db.relationship(User)
+    user_data = db.relationship(User)
 
     def __repr__(self):
         return 'The favorite starship ID is {}'.format(self.id)
@@ -136,9 +136,9 @@ class Favorite_Planets(db.Model):
     __tablename__ = 'favorite_planets'
     id = db.Column(db.Integer, primary_key=True)
     planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
-    planet_relationship = db.relationship('Planets')
+    planet_data = db.relationship('Planets')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_relationship = db.relationship(User)
+    user_data = db.relationship(User)
 
     def __repr__(self):
         return 'The ID of the favorite planet is {}'.format(self.id)
@@ -211,9 +211,9 @@ class Favorite_Films(db.Model):
     __tablename__ = 'favorite_films'
     id = db.Column(db.Integer, primary_key=True)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    film_relationship = db.relationship('Films')
+    film_data = db.relationship('Films')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_relationship = db.relationship(User)
+    user_data = db.relationship(User)
 
     def __repr__(self):
         return 'The favorite planet ID is {}'.format(self.id)
@@ -250,9 +250,9 @@ class Favorite_Characters(db.Model):
     __tablename__ = 'favorite_characters'
     id = db.Column(db.Integer, primary_key=True)
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-    character_id_relationship = db.relationship('Characters')
+    character_data = db.relationship('Characters')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_id_relationship = db.relationship(User)
+    User_data = db.relationship(User)
 
     def __repr__(self):
         return 'The ID of the favorite film is {}'.format(self.id)
@@ -295,9 +295,9 @@ class Favorite_Species(db.Model):
     __tablename__ = 'favorite_species'
     id = db.Column(db.Integer, primary_key=True)
     species_id = db.Column(db.Integer, db.ForeignKey('species.id'))
-    species_id_relationship = db.relationship('Species')
+    species_data = db.relationship('Species')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_id_relationship = relationship(User)
+    user_data = relationship(User)
 
     def __repr__(self):
         return 'The ID of the favorite species is {}'.format(self.id)
