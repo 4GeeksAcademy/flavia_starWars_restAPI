@@ -54,6 +54,24 @@ FAVORITES
 '/user/<int:user_id>/favorite_species', methods=['POST', 'GET'] # (post) add species to a particular user and (get) view the favourite species of a particular user
 '/user/<int:user_id>/favorite_species/<int:species_id>', methods=['GET', 'DELETE'] # (get) to view individually the specific species of a specific user and (delete) to delete a specific species from the favourites of a specific user
 ```
+ASSOCIATED TABLES
+```bash
+---------- STARSHIPS_FILMS ---------------
+'/starships_films', methods=['GET', 'POST'] # (get) to get all relations between starships and films and (post) to add a new relation between starships and films
+'/starships_films/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to get a specific starship/film relation and (delete) to delete a specific starship/film relation
+---------- STARSHIPS_CHARACTERS ---------
+'/starships_characters', methods=['GET', 'POST'] # (get) to get all relations between starships and characters and (post) to add a new relation between starships and characters
+'/starships_characters/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific starship/character relationship and (delete) to delete a specific starship/character relationship
+---------- PLANETS_FILMS ----------------
+'/planets_films', methods=['GET', 'POST'] # (get) to obtain all the relationships between planets and films and (post) to add a new relationship between planets and films
+'/planets_films/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific planet/film relationship, and (delete) to delete a specific planet/film relationship
+---------- FILMS_CHARACTERS- ------------
+'/films_characters', methods=['GET', 'POST'] # (get) to obtain all relationships between films and characters and (post) to add a new relationship between films and characters
+'/films_characters/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific film/character relationship and (delete) to remove a specific film/character relationship
+--------- FILMS_SPECIES -----------------
+'/films_species', methods=['GET', 'POST'] # (get) to obtain all the relationships between films and species and (post) to add a new relationship between films and species
+'/films_species/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific film/species relationship and (delete) to delete a specific film/species relationship
+```
 Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
 
 - [Extensive documentation here](https://start.4geeksacademy.com).
