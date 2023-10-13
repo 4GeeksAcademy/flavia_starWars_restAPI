@@ -2,6 +2,76 @@
 
 # Flask Boilerplate for Junior Developers
 
+## Test ready-made endpoints :)
+
+SINGLE TABLES
+```bash
+--------- USER -----------------------
+'/user', methods=['POST', 'GET'] # (post) add new users and (get) obtain all added users
+'/user/<int:user_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular user and (put) modify data of a particular user
+'/user/<int:user_id>/favorites', methods=['GET'] # (get) to obtain the favourites of all the sections of a specific user
+--------- STARSHIPS ---------------------
+'/starships', methods=['POST', 'GET'] # (post) add new starships and (get) obtain all added starships
+'/starships/<int:starships_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given starship and (put) modify data of a given starship
+---------- PLANETS -----------------------
+'/planets', methods=['POST', 'GET'] # (post) add new planets and (get) obtain all added planets
+'/planets/<int:planets_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular planet and (put) modify data of a particular planet
+---------- FILMS -------------------------
+'/films', methods=['POST', 'GET'] # (post) add new films and (get) obtain all added films
+'/films/<int:films_id>', methods=['GET', 'PUT'] # (get) obtain the information of a particular film and (put) modify data of a particular film
+---------- CHARACTERS --------------------
+'/characters', methods=['POST', 'GET'] # (post) add new characters and (get) obtain all added characters
+'/characters/<int:characters_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given character and (put) modify data of a given character
+---------- SPECIES -----------------------
+'/species', methods=['POST', 'GET'] # (post) add new species and (get) obtain all added species
+'/species/<int:species_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given species and (put) modify data of a given species
+```
+FAVORITES 
+```bash
+--------- FAVORITE STARSHIPS ------------
+'/favorite_starships', methods=['GET'] # admin endpoint // (get) view all favourite starships with their corresponding users
+'/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular starship was added to favourites and (delete) to remove from favourites all instances containing a particular starship
+'/user/<int:user_id>/favorite_starships', methods=['GET', 'POST'] # (post) add starship to a particular user and (get) view the favourite starships of a particular user
+'/user/<int:user_id>/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular starship of a particular user and (delete) to remove a particular starship from the favourites of a particular user
+--------- FAVORITE PLANETS -------------
+'/favorite_planets', methods=['GET'] # admin endpoint // (get) view all favourite planets with their corresponding users
+'/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular planet was added to favourites and (delete) to remove all instances containing a particular planet from favourites
+'/user/<int:user_id>/favorite_planets', methods=['GET', 'POST'] # (post) add planets to a particular user and (get) view a particular user's favourite planets
+'/user/<int:user_id>/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular planet for a particular user and (delete) to remove a particular planet from a particular user's favourites
+------- FAVORITE FILMS -----------------
+'/favorite_films', methods=['GET'] # admin endpoint // (get) view all favourite films with their corresponding users
+'/favorite_films/<int:film_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular film was added to favourites and (delete) to remove all instances containing a particular film from favourites
+'/user/<int:user_id>/favorite_films', methods=['POST', 'GET'] # (post) add films to a particular user and (get) view the favourite films of a particular user
+'/user/<int:user_id>/favorite_films/<int:film_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular film for a particular user and (delete) to delete a particular film from a particular user's favourites.
+-------- FAVORITE CHARACTERS ------------
+'/favorite_characters', methods=['GET'] # admin endpoint // (get) view all favourite characters with their corresponding users
+'/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular character was added to favourites and (delete) to remove from favourites all instances containing a particular character
+'/user/<int:user_id>/favorite_characters', methods=['POST', 'GET'] # (post) add characters to a particular user and (get) view the favourite characters of a particular user
+'/user/<int:user_id>/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular character for a particular user and (delete) to delete a particular character from a particular user's favourites
+-------- FAVORITE SPECIES --------------
+'/favorite_species', methods=['GET'] # admin endpoint // (get) view all favourite species with their corresponding users
+'/favorite_species/<int:species_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular species was added to favourites and (delete) to remove all instances containing a particular species from favourites
+'/user/<int:user_id>/favorite_species', methods=['POST', 'GET'] # (post) add species to a particular user and (get) view the favourite species of a particular user
+'/user/<int:user_id>/favorite_species/<int:species_id>', methods=['GET', 'DELETE'] # (get) to view individually the specific species of a specific user and (delete) to delete a specific species from the favourites of a specific user
+```
+ASSOCIATED TABLES
+```bash
+---------- STARSHIPS_FILMS ---------------
+'/starships_films', methods=['GET', 'POST'] # (get) to get all relations between starships and films and (post) to add a new relation between starships and films
+'/starships_films/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to get a specific starship/film relation and (delete) to delete a specific starship/film relation
+---------- STARSHIPS_CHARACTERS ---------
+'/starships_characters', methods=['GET', 'POST'] # (get) to get all relations between starships and characters and (post) to add a new relation between starships and characters
+'/starships_characters/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific starship/character relationship and (delete) to delete a specific starship/character relationship
+---------- PLANETS_FILMS ----------------
+'/planets_films', methods=['GET', 'POST'] # (get) to obtain all the relationships between planets and films and (post) to add a new relationship between planets and films
+'/planets_films/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific planet/film relationship, and (delete) to delete a specific planet/film relationship
+---------- FILMS_CHARACTERS- ------------
+'/films_characters', methods=['GET', 'POST'] # (get) to obtain all relationships between films and characters and (post) to add a new relationship between films and characters
+'/films_characters/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific film/character relationship and (delete) to remove a specific film/character relationship
+--------- FILMS_SPECIES -----------------
+'/films_species', methods=['GET', 'POST'] # (get) to obtain all the relationships between films and species and (post) to add a new relationship between films and species
+'/films_species/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'] # (get) to obtain a specific film/species relationship and (delete) to delete a specific film/species relationship
+```
 Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
 
 - [Extensive documentation here](https://start.4geeksacademy.com).
