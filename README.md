@@ -26,7 +26,34 @@ SINGLE TABLES
 '/species', methods=['POST', 'GET'] # (post) add new species and (get) obtain all added species
 '/species/<int:species_id>', methods=['GET', 'PUT'] # (get) obtain the information of a given species and (put) modify data of a given species
 ```
-
+FAVORITES 
+```bash
+--------- FAVORITE STARSHIPS ------------
+'/favorite_starships', methods=['GET'] # admin endpoint // (get) view all favourite starships with their corresponding users
+'/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular starship was added to favourites and (delete) to remove from favourites all instances containing a particular starship
+'/user/<int:user_id>/favorite_starships', methods=['GET', 'POST'] # (post) add starship to a particular user and (get) view the favourite starships of a particular user
+'/user/<int:user_id>/favorite_starships/<int:starship_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular starship of a particular user and (delete) to remove a particular starship from the favourites of a particular user
+--------- FAVORITE PLANETS -------------
+'/favorite_planets', methods=['GET'] # admin endpoint // (get) view all favourite planets with their corresponding users
+'/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular planet was added to favourites and (delete) to remove all instances containing a particular planet from favourites
+'/user/<int:user_id>/favorite_planets', methods=['GET', 'POST'] # (post) add planets to a particular user and (get) view a particular user's favourite planets
+'/user/<int:user_id>/favorite_planets/<int:planet_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular planet for a particular user and (delete) to remove a particular planet from a particular user's favourites
+------- FAVORITE FILMS -----------------
+'/favorite_films', methods=['GET'] # admin endpoint // (get) view all favourite films with their corresponding users
+'/favorite_films/<int:film_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular film was added to favourites and (delete) to remove all instances containing a particular film from favourites
+'/user/<int:user_id>/favorite_films', methods=['POST', 'GET'] # (post) add films to a particular user and (get) view the favourite films of a particular user
+'/user/<int:user_id>/favorite_films/<int:film_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular film for a particular user and (delete) to delete a particular film from a particular user's favourites.
+-------- FAVORITE CHARACTERS ------------
+'/favorite_characters', methods=['GET'] # admin endpoint // (get) view all favourite characters with their corresponding users
+'/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular character was added to favourites and (delete) to remove from favourites all instances containing a particular character
+'/user/<int:user_id>/favorite_characters', methods=['POST', 'GET'] # (post) add characters to a particular user and (get) view the favourite characters of a particular user
+'/user/<int:user_id>/favorite_characters/<int:character_id>', methods=['GET', 'DELETE'] # (get) to individually view a particular character for a particular user and (delete) to delete a particular character from a particular user's favourites
+-------- FAVORITE SPECIES --------------
+'/favorite_species', methods=['GET'] # admin endpoint // (get) view all favourite species with their corresponding users
+'/favorite_species/<int:species_id>', methods=['GET', 'DELETE'] # admin endpoint // (get) to see all the times a particular species was added to favourites and (delete) to remove all instances containing a particular species from favourites
+'/user/<int:user_id>/favorite_species', methods=['POST', 'GET'] # (post) add species to a particular user and (get) view the favourite species of a particular user
+'/user/<int:user_id>/favorite_species/<int:species_id>', methods=['GET', 'DELETE'] # (get) to view individually the specific species of a specific user and (delete) to delete a specific species from the favourites of a specific user
+```
 Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
 
 - [Extensive documentation here](https://start.4geeksacademy.com).
